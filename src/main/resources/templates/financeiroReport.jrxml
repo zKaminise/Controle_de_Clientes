@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports
+                                  http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="financeiroReport" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30"
+              rightMargin="30" topMargin="20" bottomMargin="20" uuid="e8d9d7b8-16c5-4c94-b79a-40851a3d9b0b">
+
+    <field name="valorPago" class="java.math.BigDecimal"/>
+    <field name="diaDoPagamento" class="java.time.LocalDate"/>
+    <field name="metodoPagamentoEnum" class="java.lang.String"/>
+
+    <title>
+        <band height="50">
+            <textField>
+                <reportElement x="0" y="10" width="535" height="30" uuid="ec7c7e87-cb5b-4a2f-8a23-e23c760a1ec3"/>
+                <textElement>
+                    <font size="18" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Relatório Financeiro de Pagamentos"]]></textFieldExpression>
+            </textField>
+        </band>
+    </title>
+
+    <columnHeader>
+        <band height="30">
+            <staticText>
+                <reportElement x="0" y="0" width="120" height="20" uuid="f6d76c37-f365-498e-8b4d-8f4a4e97c5a1"/>
+                <textElement>
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[Data de Pagamento]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="130" y="0" width="120" height="20" uuid="7d2b6fb2-8c7f-4b69-9064-7a6cf502e81f"/>
+                <textElement>
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[Valor Pago]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="260" y="0" width="120" height="20" uuid="aad64cc7-2137-4874-a68b-6e0420a6438b"/>
+                <textElement>
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[Método de Pagamento]]></text>
+            </staticText>
+        </band>
+    </columnHeader>
+
+    <detail>
+        <band height="30">
+            <textField>
+                <reportElement x="0" y="0" width="120" height="20" uuid="5bfb59a3-04b2-4bd9-bc6b-358163b92f77"/>
+                <textFieldExpression><![CDATA[$F{diaDoPagamento}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="130" y="0" width="120" height="20" uuid="cd37c8a3-648e-4f15-8c99-8c4e2549cbd3"/>
+                <textFieldExpression><![CDATA[$F{valorPago}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="260" y="0" width="120" height="20" uuid="2c7b455e-9f6b-4bda-9273-9144ae476242"/>
+                <textFieldExpression><![CDATA[$F{metodoPagamentoEnum}]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+
+    <pageFooter>
+        <band height="30">
+            <textField>
+                <reportElement x="0" y="0" width="535" height="20" uuid="c135fb98-dc73-4c02-bb99-531c83362f5b"/>
+                <textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER}]]></textFieldExpression>
+            </textField>
+        </band>
+    </pageFooter>
+</jasperReport>
