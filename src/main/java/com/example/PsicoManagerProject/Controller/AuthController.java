@@ -7,6 +7,12 @@ import com.example.PsicoManagerProject.Entitys.User;
 import com.example.PsicoManagerProject.Repositorys.UserRepository;
 import com.example.PsicoManagerProject.Security.JwtService;
 import com.example.PsicoManagerProject.Service.EmailService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +21,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/auth")
+@Tag(name = "Login no sistema", description = "Tela de Login e autenticação de usuarios")
 public class AuthController {
 
     private final UserRepository userRepository;
@@ -29,6 +36,12 @@ public class AuthController {
     }
 
     @PostMapping("/register")
+    @Operation(summary = "Registrar um novo usuario e senha", description = "Essa função é responsável por Registrar um novo usuario e senha")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", content = {
+                    @Content(schema = @Schema(implementation = User.class))
+            })
+    })
     public String register(@RequestBody RegisterRequest request) {
         User user = new User();
         user.setUsername(request.getUsername());
@@ -39,6 +52,13 @@ public class AuthController {
     }
 
     @PostMapping("/login")
+    @Operation(summary = "Fazer login no sistema", description = "Essa função é responsável por Fazer login no sistema")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", content = {
+                    @Content(schema = @Schema(implementation = User.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "Usuario não encontrado")
+    })
     public LoginResponse login(@RequestBody LoginRequest request) {
         User user = userRepository.findByUsername(request.getUsername());
         if (user != null && passwordEncoder.matches(request.getPassword(), user.getPassword())) {
@@ -49,6 +69,13 @@ public class AuthController {
     }
 
     @PostMapping("/request-reset-password")
+    @Operation(summary = "Solicitar um reset de senha", description = "Essa função é responsável por solicitar um reset de senha")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", content = {
+                    @Content(schema = @Schema(implementation = User.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "Usuario não encontrado")
+    })
     public String requestResetPassword(@RequestParam String username) {
         User user = userRepository.findByUsername(username);
         if (user == null) {
@@ -66,6 +93,12 @@ public class AuthController {
     }
 
     @PostMapping("/reset-password")
+    @Operation(summary = "Alterar a senha", description = "Essa função é responsável por alterar a senha do usuario")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", content = {
+                    @Content(schema = @Schema(implementation = User.class))
+            })
+    })
     public String resetPassword(@RequestParam String token, @RequestParam String newPassword) {
         User user = userRepository.findByResetPasswordToken(token);
         if (user == null || user.getTokenExpirationTime().isBefore(LocalDateTime.now())) {

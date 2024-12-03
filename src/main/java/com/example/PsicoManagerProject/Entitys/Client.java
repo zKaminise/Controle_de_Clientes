@@ -74,5 +74,6 @@ public class Client {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "recebeu_alta")
+    @Schema(example = "SIM", description = "Se o cliente já recebeu alta (SIM ou NAO)")
     private RecebeuAltaEnum recebeuAltaEnum;
 }
