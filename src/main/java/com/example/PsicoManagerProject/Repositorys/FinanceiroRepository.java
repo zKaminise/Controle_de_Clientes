@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface FinanceiroRepository extends JpaRepository<Financeiro,Long> {
     List<Financeiro> findByDiaDoPagamentoBetween(LocalDate startDate, LocalDate endDate);
+    void deleteByClientId(Long clientId);
 }

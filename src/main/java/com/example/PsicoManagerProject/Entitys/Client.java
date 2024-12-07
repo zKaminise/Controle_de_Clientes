@@ -34,7 +34,7 @@ public class Client {
     @Schema(example = "Gabriel Misao",minLength = 3, maxLength = 150, requiredMode = Schema.RequiredMode.REQUIRED, description = "Nome do Cliente")
     private String nome;
 
-    @JsonFormat(pattern = "dd/MM/yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @Past(message = "A data não está correta")
     @Column(nullable = false)
     private LocalDate dataNascimento;
