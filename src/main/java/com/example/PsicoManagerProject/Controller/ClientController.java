@@ -75,7 +75,8 @@ public class ClientController {
                         client.getCpf(),
                         client.getEmail(),
                         client.getDataNascimento().toString(),
-                        client.getRecebeuAltaEnum().toString()
+                        client.getDataInicioTratamento().toString(),
+                        client.getDataFimTratamento() != null ? client.getDataFimTratamento().toString() : null
                 ))
                 .toList();
     }

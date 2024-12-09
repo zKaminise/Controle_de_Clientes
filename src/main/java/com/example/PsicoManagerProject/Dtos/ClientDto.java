@@ -8,13 +8,15 @@ public class ClientDto {
     private String cpf;
     private String email;
     private String dataNascimento;
-    private String recebeuAlta;
+    private String dataInicioTratamento;
+    private String dataFimTratamento;
 
-    public ClientDto(String nome, String cpf, String email, String dataNascimento, String recebeuAlta) {
+    public ClientDto(String nome, String cpf, String email, String dataNascimento, String dataInicioTratamento, String dataFimTratamento) {
         this.nome = nome;
         this.cpf = cpf;
         this.email = email;
         this.dataNascimento = dataNascimento;
-        this.recebeuAlta = recebeuAlta;
+        this.dataInicioTratamento = dataInicioTratamento;
+        this.dataFimTratamento = dataFimTratamento;
     }
 }

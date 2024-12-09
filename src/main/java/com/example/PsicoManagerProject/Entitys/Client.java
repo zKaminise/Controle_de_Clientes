@@ -1,9 +1,11 @@
 package com.example.PsicoManagerProject.Entitys;
 
+import com.example.PsicoManagerProject.Enums.EscolaridadeEnum;
 import com.example.PsicoManagerProject.Enums.EstadosEnum;
 import com.example.PsicoManagerProject.Enums.GeneroEnum;
 import com.example.PsicoManagerProject.Enums.RecebeuAltaEnum;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -51,12 +53,12 @@ public class Client {
 
     @NotBlank(message = "CPF é obrigatório")
     @Pattern(regexp = "\\d{11}", message = "CPF deve conter 11 números.")
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     @Schema(example = "12345678910",minLength = 11, maxLength = 11, requiredMode = Schema.RequiredMode.REQUIRED, description = "CPF do Cliente")
     private String cpf;
 
     @Email(message = "Email deve ser valido")
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     @Schema(example = "Gabriel@teste.com", requiredMode = Schema.RequiredMode.REQUIRED, description = "Email do Cliente")
     private String email;
 
@@ -70,10 +72,31 @@ public class Client {
     private String medicamentos;
 
     @Column(columnDefinition = "TEXT")
+    private String tratamento;
+
+    @Column(columnDefinition = "TEXT")
     private String queixaPrincipal;
 
+    @Column(columnDefinition = "TEXT")
+    private String frequencia;
+
+    @Column(name = "escolaridade")
     @Enumerated(EnumType.STRING)
-    @Column(name = "recebeu_alta")
-    @Schema(example = "SIM", description = "Se o cliente já recebeu alta (SIM ou NAO)")
-    private RecebeuAltaEnum recebeuAltaEnum;
+    private EscolaridadeEnum escolaridadeEnum;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Column(nullable = false)
+    private LocalDate dataInicioTratamento;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @Past(message = "A data precisa ser anterior a atual")
+    private LocalDate dataFimTratamento;
+
+//    @Enumerated(EnumType.STRING)
+//    @Column(name = "recebeu_alta")
+//    @Schema(example = "SIM", description = "Se o cliente já recebeu alta (SIM ou NAO)")
+//    private RecebeuAltaEnum recebeuAltaEnum;
+
+
 }
