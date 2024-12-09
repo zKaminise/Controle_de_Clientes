@@ -32,6 +32,47 @@ public class FinanceiroController {
     @Autowired
     private ClientRepository clientRepository;
 
+    @GetMapping("/{cpf}/pagamentos")
+    @Operation(summary = "Listar pagamentos por CPF", description = "Essa função é responsável por listar todos os pagamentos cadastrados para um cliente específico usando o CPF.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", content = {
+                    @Content(schema = @Schema(implementation = Financeiro.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "Cliente não encontrado com o CPF fornecido")
+    })
+    public ResponseEntity<List<Financeiro>> getPaymentsByCpf(@PathVariable String cpf) {
+        var client = clientRepository.findByCpf(cpf)
+                .orElseThrow(() -> new ClientNotFoundException("Cliente com CPF: " + cpf + " não encontrado"));
+
+        List<Financeiro> payments = financeiroRepository.findByClient(client);
+        return ResponseEntity.ok(payments);
+    }
+
+    @GetMapping("/receipt/{cpf}/{month}/{year}")
+    @Operation(summary = "Gerar recibo por mês e ano", description = "Gera um recibo para o cliente com base no CPF, mês e ano fornecidos.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Recibo gerado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Nenhum pagamento encontrado para o cliente no mês/ano especificado")
+    })
+    public ResponseEntity<String> generateReceiptByMonthAndYear(
+            @PathVariable String cpf,
+            @PathVariable int month,
+            @PathVariable int year) {
+        var client = clientRepository.findByCpf(cpf)
+                .orElseThrow(() -> new ClientNotFoundException("Cliente com CPF: " + cpf + " não encontrado"));
+
+        List<Financeiro> payments = financeiroRepository.findByClientAndMonthAndYear(client, month, year);
+
+        if (payments.isEmpty()) {
+            throw new ResourceNotFoundException("Nenhum pagamento encontrado para o cliente no mês/ano especificado");
+        }
+
+        PdfGenerator.generateReceipt(payments);
+        return ResponseEntity.ok("Recibo gerado com sucesso!");
+    }
+
+
+
     @PostMapping
     @Operation(summary = "Cadastrar pagamento do Cliente, informando o CPF", description = "Essa função é responsável por cadastrar novos pagamentos dos clientes")
     @ApiResponses({
