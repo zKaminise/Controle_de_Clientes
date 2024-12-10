@@ -4,18 +4,27 @@
               xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports
                                   http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
               name="reciboTemplate" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30"
-              rightMargin="30" topMargin="20" bottomMargin="20" uuid="12345abcd-6789-ef01-2345-67890abcdef">
+              rightMargin="30" topMargin="20" bottomMargin="20" uuid="e0b2c6c5-1234-5678-9abc-def123456789">
 
     <field name="valorPago" class="java.math.BigDecimal"/>
     <field name="diaDoPagamento" class="java.time.LocalDate"/>
     <field name="metodoPagamentoEnum" class="java.lang.String"/>
+    <field name="nome" class="java.lang.String"/>
+    <field name="referencia" class="java.lang.String"/>
+    <field name="cpf" class="java.lang.String"/>
 
     <title>
-        <band height="50">
+        <band height="200">
+
+            <image>
+                <reportElement x="345" y="0" width="200" height="200" uuid="04072f6a-b607-44b2-a6db-b2cd0db8d9b6"/>
+                <imageExpression><![CDATA["./AkemyLogo.png"]]></imageExpression>
+            </image>
+
             <textField>
-                <reportElement x="0" y="10" width="535" height="30" uuid="ec7c7e87-cb5b-4a2f-8a23-e23c760a1ec3"/>
+                <reportElement x="0" y="10" width="535" height="30" uuid="e0b2c6c5-1234-5678-9abc-def123456789"/>
                 <textElement>
-                    <font size="18" isBold="true"/>
+                    <font size="20" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA["Recibo de Pagamento"]]></textFieldExpression>
             </textField>
@@ -23,28 +32,72 @@
     </title>
 
     <detail>
-        <band height="100">
+        <band height="250">
             <textField>
-                <reportElement x="0" y="10" width="535" height="20" uuid="f6d76c37-f365-498e-8b4d-8f4a4e97c5a1"/>
+                <reportElement x="0" y="-150" width="535" height="20" uuid="e0b2c6c5-1234-5678-9abc-def123456789"/>
+                <textElement>
+                    <font size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Nome do Cliente: " + $F{nome}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="-120" width="535" height="20" uuid="9585ab78-6491-4e11-a733-3c190292b9c6"/>
+                <textElement>
+                    <font size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["CPF: " + $F{cpf}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="-90" width="535" height="20" uuid="e0b2c6c5-1234-5678-9abc-def123456789"/>
                 <textElement>
                     <font size="12"/>
                 </textElement>
                 <textFieldExpression><![CDATA["Valor Pago: R$ " + $F{valorPago}]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="0" y="40" width="535" height="20" uuid="7d2b6fb2-8c7f-4b69-9064-7a6cf502e81f"/>
+                <reportElement x="0" y="-60" width="535" height="20" uuid="e0b2c6c5-1234-5678-9abc-def123456789"/>
                 <textElement>
                     <font size="12"/>
                 </textElement>
                 <textFieldExpression><![CDATA["Data do Pagamento: " + $F{diaDoPagamento}]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="0" y="70" width="535" height="20" uuid="aad64cc7-2137-4874-a68b-6e0420a6438b"/>
+                <reportElement x="0" y="-30" width="535" height="20" uuid="e0b2c6c5-1234-5678-9abc-def123456789"/>
+                <textElement>
+                    <font size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Mês de Referencia: " + $F{referencia}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="0" width="535" height="20" uuid="e0b2c6c5-1234-5678-9abc-def123456789"/>
                 <textElement>
                     <font size="12"/>
                 </textElement>
                 <textFieldExpression><![CDATA["Método de Pagamento: " + $F{metodoPagamentoEnum}]]></textFieldExpression>
             </textField>
+
+            <textField>
+                <reportElement x="0" y="30" width="535" height="20" uuid="e0b2c6c5-1234-5678-9abc-def123456789" />
+                <textElement>
+                    <font size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Emitente: Zélia Akemy Kaminise"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="60" width="535" height="20" uuid="e0b2c6c5-1234-5678-9abc-def123456789" />
+                <textElement>
+                    <font size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["CRP: 14/02026-7"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="90" width="535" height="20" uuid="e0b2c6c5-1234-5678-9abc-def123456789" />
+                <textElement>
+                    <font size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Endereço: teste"]]></textFieldExpression>
+            </textField>
+
         </band>
     </detail>
 </jasperReport>

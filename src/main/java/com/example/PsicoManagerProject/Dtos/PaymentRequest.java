@@ -12,5 +12,6 @@ public class PaymentRequest {
     private String cpf;
     private BigDecimal valorPago;
     private LocalDate diaDoPagamento;
+    private String referencia;
     private MetodoPagamentoEnum metodoPagamentoEnum;
 }

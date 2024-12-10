@@ -14,10 +14,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -54,22 +54,36 @@ public class FinanceiroController {
             @ApiResponse(responseCode = "200", description = "Recibo gerado com sucesso"),
             @ApiResponse(responseCode = "404", description = "Nenhum pagamento encontrado para o cliente no mês/ano especificado")
     })
-    public ResponseEntity<String> generateReceiptByMonthAndYear(
+    public ResponseEntity<byte[]> generateReceiptByMonthAndYear(
             @PathVariable String cpf,
             @PathVariable int month,
             @PathVariable int year) {
         var client = clientRepository.findByCpf(cpf)
                 .orElseThrow(() -> new ClientNotFoundException("Cliente com CPF: " + cpf + " não encontrado"));
 
-        List<Financeiro> payments = financeiroRepository.findByClientAndMonthAndYear(client, month, year);
+        // Calcula o intervalo de datas
+        LocalDate startDate = LocalDate.of(year, month, 1);
+        LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
+
+        List<Financeiro> payments = financeiroRepository.findByClientAndDiaDoPagamentoBetween(client, startDate, endDate);
 
         if (payments.isEmpty()) {
             throw new ResourceNotFoundException("Nenhum pagamento encontrado para o cliente no mês/ano especificado");
         }
 
-        PdfGenerator.generateReceipt(payments);
-        return ResponseEntity.ok("Recibo gerado com sucesso!");
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            PdfGenerator.generateReceipt(payments, baos);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentDisposition(ContentDisposition.inline().filename("recibo.pdf").build());
+
+            return new ResponseEntity<>(baos.toByteArray(), headers, HttpStatus.OK);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao gerar recibo", e);
+        }
     }
+
 
 
 
@@ -88,6 +102,7 @@ public class FinanceiroController {
         payment.setClient(client);
         payment.setValorPago(paymentRequest.getValorPago());
         payment.setDiaDoPagamento(paymentRequest.getDiaDoPagamento());
+        payment.setReferencia(paymentRequest.getReferencia());
         payment.setMetodoPagamentoEnum(paymentRequest.getMetodoPagamentoEnum());
 
         financeiroRepository.save(payment);
@@ -96,20 +111,37 @@ public class FinanceiroController {
 
 
     @GetMapping("/report")
-    @Operation(summary = "Relatório dos pagamentos cadastrados", description = "Essa função é responsável por trazer o relatório dos pagamentos dos clientes, filtrados por datas")
+    @Operation(summary = "Relatório dos pagamentos cadastrados", description = "Gera um relatório dos pagamentos dos clientes, filtrados por datas.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", content = {
-                    @Content(schema = @Schema(implementation = Financeiro.class))
-            })
+            @ApiResponse(responseCode = "200", description = "Relatório gerado com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Parâmetros inválidos"),
+            @ApiResponse(responseCode = "404", description = "Nenhum pagamento encontrado no intervalo de datas fornecido")
     })
-    public String generateReport(@RequestParam String startDate, @RequestParam String endDate) {
-        LocalDate start = LocalDate.parse(startDate);
-        LocalDate end = LocalDate.parse(endDate);
+    public ResponseEntity<byte[]> generateReport(@RequestParam String startDate, @RequestParam String endDate) {
+        try {
+            LocalDate start = LocalDate.parse(startDate);
+            LocalDate end = LocalDate.parse(endDate);
 
-        List<Financeiro> payments = financeiroRepository.findByDiaDoPagamentoBetween(start, end);
-        PdfGenerator.generateReport(payments);
-        return "Relatório gerado com sucesso!";
+            List<Financeiro> payments = financeiroRepository.findByDiaDoPagamentoBetween(start, end);
+
+            if (payments.isEmpty()) {
+                throw new ResourceNotFoundException("Nenhum pagamento encontrado no intervalo de datas fornecido.");
+            }
+
+            try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+                PdfGenerator.generateReport(payments, baos);
+
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_PDF);
+                headers.setContentDisposition(ContentDisposition.inline().filename("relatorio.pdf").build());
+
+                return new ResponseEntity<>(baos.toByteArray(), headers, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao gerar relatório: " + e.getMessage(), e);
+        }
     }
+
 
     @GetMapping("/receipt/{id}")
     @Operation(summary = "Emitir recibo de pagamento do cliente", description = "Essa função é responsável por Emitir recibo de pagamento do cliente")
@@ -118,18 +150,23 @@ public class FinanceiroController {
                     @Content(schema = @Schema(implementation = Financeiro.class))
             })
     })
-    public ResponseEntity<String> generateReceipt(@PathVariable Long id) {
+    public ResponseEntity<byte[]> generateReceipt(@PathVariable Long id) {
         Financeiro payment = financeiroRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Pagamento com ID: " + id + " não foi encontrado!"));
 
-        try {
-            PdfGenerator.generateReceipt(List.of(payment));
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            PdfGenerator.generateReceipt(List.of(payment), baos); // Adiciona o OutputStream
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentDisposition(ContentDisposition.inline().filename("recibo.pdf").build());
+
+            return new ResponseEntity<>(baos.toByteArray(), headers, HttpStatus.OK);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Erro ao gerar recibo: " + e.getMessage());
+                    .body(null);
         }
-
-        return ResponseEntity.ok("Recibo gerado com sucesso!");
     }
+
+
 
 }

@@ -32,6 +32,9 @@ public class Financeiro {
     @Schema(example = "2024-11-08", description = "Dia que o pagamento foi feito")
     private LocalDate diaDoPagamento;
 
+    @Column(columnDefinition = "TEXT")
+    private String referencia;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "Pagamento_via")
     @Schema(example = "PIX", description = "Método usado para pagar")
