@@ -142,31 +142,4 @@ public class FinanceiroController {
         }
     }
 
-
-    @GetMapping("/receipt/{id}")
-    @Operation(summary = "Emitir recibo de pagamento do cliente", description = "Essa função é responsável por Emitir recibo de pagamento do cliente")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", content = {
-                    @Content(schema = @Schema(implementation = Financeiro.class))
-            })
-    })
-    public ResponseEntity<byte[]> generateReceipt(@PathVariable Long id) {
-        Financeiro payment = financeiroRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Pagamento com ID: " + id + " não foi encontrado!"));
-
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            PdfGenerator.generateReceipt(List.of(payment), baos); // Adiciona o OutputStream
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_PDF);
-            headers.setContentDisposition(ContentDisposition.inline().filename("recibo.pdf").build());
-
-            return new ResponseEntity<>(baos.toByteArray(), headers, HttpStatus.OK);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(null);
-        }
-    }
-
-
-
 }
