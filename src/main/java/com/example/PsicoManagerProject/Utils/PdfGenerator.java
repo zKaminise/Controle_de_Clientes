@@ -8,6 +8,8 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
@@ -27,7 +29,12 @@ public class PdfGenerator {
                 return map;
             }).toList();
 
-            JasperReport jasperReport = JasperCompileManager.compileReport("src/main/resources/templates/financeiroReport.jrxml");
+            InputStream templateStream = PdfGenerator.class.getResourceAsStream("/templates/financeiroReport.jrxml");
+            if (templateStream == null) {
+                throw new FileNotFoundException("Template 'financeiroReport.jrxml' não encontrado no classpath.");
+            }
+            JasperReport jasperReport = JasperCompileManager.compileReport(templateStream);
+
             JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(data);
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, null, dataSource);
 
@@ -35,6 +42,8 @@ public class PdfGenerator {
         } catch (JRException e) {
             e.printStackTrace();
             throw new RuntimeException("Erro ao gerar o relatório PDF: " + e.getMessage());
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -52,7 +61,12 @@ public class PdfGenerator {
                 return map;
             }).toList();
 
-            JasperReport jasperReport = JasperCompileManager.compileReport("src/main/resources/templates/reciboTemplate.jrxml");
+            InputStream templateStream = PdfGenerator.class.getResourceAsStream("/templates/reciboTemplate.jrxml");
+            if (templateStream == null) {
+                throw new FileNotFoundException("Template 'reciboTemplate.jrxml' não encontrado no classpath.");
+            }
+            JasperReport jasperReport = JasperCompileManager.compileReport(templateStream);
+
             JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(data);
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, null, dataSource);
 
@@ -60,6 +74,8 @@ public class PdfGenerator {
         } catch (JRException e) {
             e.printStackTrace();
             throw new RuntimeException("Erro ao gerar o relatório PDF: " + e.getMessage());
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 

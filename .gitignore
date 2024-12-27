@@ -2,9 +2,12 @@ HELP.md
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
-!**/src/main/java/com.example.PsicoManagerProject/Config/WebConfig
 !**/src/test/**/target/
 /AkemyLogo.png
+
+# Ignorar o arquivo WebConfig
+src/main/java/com.example.PsicoManagerProject/Config/WebConfig
+
 
 ### STS ###
 .apt_generated
