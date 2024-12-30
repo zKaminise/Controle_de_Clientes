@@ -61,9 +61,13 @@ public class PdfGenerator {
                 return map;
             }).toList();
 
-            InputStream templateStream = PdfGenerator.class.getResourceAsStream("/templates/reciboTemplate.jrxml");
+            InputStream templateStream = PdfGenerator.class.getResourceAsStream("templates/reciboTemplate.jrxml");
             if (templateStream == null) {
+                System.err.println("Erro: Template 'reciboTemplate.jrxml' não encontrado no classpath.");
                 throw new FileNotFoundException("Template 'reciboTemplate.jrxml' não encontrado no classpath.");
+            } else {
+                System.out.println("Template encontrado com sucesso!");
+
             }
             JasperReport jasperReport = JasperCompileManager.compileReport(templateStream);
 
