@@ -4,12 +4,8 @@ import com.example.PsicoManagerProject.Entitys.Financeiro;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
-import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
@@ -24,16 +20,25 @@ public class PdfGenerator {
                 map.put("metodoPagamentoEnum", payment.getMetodoPagamentoEnum() != null ? payment.getMetodoPagamentoEnum().name() : "N/A");
                 map.put("diaDoPagamento", payment.getDiaDoPagamento());
                 map.put("valorPago", payment.getValorPago());
-                map.put("nome", payment.getClient() != null ? payment.getClient().getNome() : "N/A"); // Adiciona o nome do cliente
+                map.put("nome", payment.getClient() != null ? payment.getClient().getNome() : "N/A");
                 map.put("referencia", payment.getReferencia() != null ? payment.getReferencia() : "N/A");
                 return map;
             }).toList();
 
-            InputStream templateStream = PdfGenerator.class.getResourceAsStream("/templates/financeiroReport.jrxml");
-            if (templateStream == null) {
-                throw new FileNotFoundException("Template 'financeiroReport.jrxml' não encontrado no classpath.");
+            // Obtém o caminho do template a partir da variável de ambiente
+            String templatePath = System.getenv("RECIBO_TEMPLATE_PATH");
+            if (templatePath == null || templatePath.isEmpty()) {
+                throw new IllegalStateException("A variável de ambiente RECIBO_TEMPLATE_PATH não está configurada.");
             }
-            JasperReport jasperReport = JasperCompileManager.compileReport(templateStream);
+
+            // Localiza o arquivo do template
+            File templateFile = new File(templatePath, "financeiroReport.jrxml");
+            if (!templateFile.exists()) {
+                throw new FileNotFoundException("Arquivo 'financeiroReport.jrxml' não encontrado no caminho: " + templateFile.getAbsolutePath());
+            }
+
+            // Compila o relatório
+            JasperReport jasperReport = JasperCompileManager.compileReport(templateFile.getAbsolutePath());
 
             JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(data);
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, null, dataSource);
@@ -46,7 +51,6 @@ public class PdfGenerator {
             throw new RuntimeException(e);
         }
     }
-
 
     public static void generateReceipt(List<Financeiro> payments, OutputStream outputStream) {
         try {
@@ -56,20 +60,25 @@ public class PdfGenerator {
                 map.put("diaDoPagamento", payment.getDiaDoPagamento());
                 map.put("valorPago", payment.getValorPago());
                 map.put("cpf", payment.getClient() != null ? payment.getClient().getCpf() : "N/A");
-                map.put("nome", payment.getClient() != null ? payment.getClient().getNome() : "N/A"); // Adiciona o nome do cliente
-                map.put("referencia", payment.getReferencia() != null ? payment.getReferencia() : "N/A"); // Adiciona a referência
+                map.put("nome", payment.getClient() != null ? payment.getClient().getNome() : "N/A");
+                map.put("referencia", payment.getReferencia() != null ? payment.getReferencia() : "N/A");
                 return map;
             }).toList();
 
-            InputStream templateStream = PdfGenerator.class.getResourceAsStream("templates/reciboTemplate.jrxml");
-            if (templateStream == null) {
-                System.err.println("Erro: Template 'reciboTemplate.jrxml' não encontrado no classpath.");
-                throw new FileNotFoundException("Template 'reciboTemplate.jrxml' não encontrado no classpath.");
-            } else {
-                System.out.println("Template encontrado com sucesso!");
-
+            // Obtém o caminho do template a partir da variável de ambiente
+            String templatePath = System.getenv("RECIBO_TEMPLATE_PATH");
+            if (templatePath == null || templatePath.isEmpty()) {
+                throw new IllegalStateException("A variável de ambiente RECIBO_TEMPLATE_PATH não está configurada.");
             }
-            JasperReport jasperReport = JasperCompileManager.compileReport(templateStream);
+
+            // Localiza o arquivo do template
+            File templateFile = new File(templatePath, "reciboTemplate.jrxml");
+            if (!templateFile.exists()) {
+                throw new FileNotFoundException("Arquivo 'reciboTemplate.jrxml' não encontrado no caminho: " + templateFile.getAbsolutePath());
+            }
+
+            // Compila o relatório
+            JasperReport jasperReport = JasperCompileManager.compileReport(templateFile.getAbsolutePath());
 
             JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(data);
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, null, dataSource);
@@ -82,8 +91,4 @@ public class PdfGenerator {
             throw new RuntimeException(e);
         }
     }
-
-
-
-
 }
