@@ -6,6 +6,7 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
@@ -65,20 +66,14 @@ public class PdfGenerator {
                 return map;
             }).toList();
 
-            // Obtém o caminho do template a partir da variável de ambiente
-            String templatePath = System.getenv("RECIBO_TEMPLATE_PATH");
-            if (templatePath == null || templatePath.isEmpty()) {
-                throw new IllegalStateException("A variável de ambiente RECIBO_TEMPLATE_PATH não está configurada.");
+            // Obtém o arquivo do template do classpath
+            InputStream templateStream = PdfGenerator.class.getClassLoader().getResourceAsStream("templates/reciboTemplate.jrxml");
+            if (templateStream == null) {
+                throw new FileNotFoundException("Template 'reciboTemplate.jrxml' não encontrado no classpath.");
             }
 
-            // Localiza o arquivo do template
-            File templateFile = new File(templatePath, "reciboTemplate.jrxml");
-            if (!templateFile.exists()) {
-                throw new FileNotFoundException("Arquivo 'reciboTemplate.jrxml' não encontrado no caminho: " + templateFile.getAbsolutePath());
-            }
-
-            // Compila o relatório
-            JasperReport jasperReport = JasperCompileManager.compileReport(templateFile.getAbsolutePath());
+            // Compila o relatório a partir do InputStream
+            JasperReport jasperReport = JasperCompileManager.compileReport(templateStream);
 
             JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(data);
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, null, dataSource);
