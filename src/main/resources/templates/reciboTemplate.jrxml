@@ -16,10 +16,10 @@
     <title>
         <band height="200">
 
-            <image>
-                <reportElement x="345" y="0" width="200" height="200" uuid="04072f6a-b607-44b2-a6db-b2cd0db8d9b6"/>
-                <imageExpression><![CDATA["./AkemyLogo.png"]]></imageExpression>
-            </image>
+<!--            <image>-->
+<!--                <reportElement x="345" y="0" width="200" height="200" uuid="04072f6a-b607-44b2-a6db-b2cd0db8d9b6"/>-->
+<!--                <imageExpression><![CDATA["./AkemyLogo.png"]]></imageExpression>-->
+<!--            </image>-->
 
             <textField>
                 <reportElement x="0" y="10" width="535" height="30" uuid="e0b2c6c5-1234-5678-9abc-def123456789"/>
