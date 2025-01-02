@@ -16,6 +16,7 @@ public class PdfGenerator {
 
     public static void generateReport(List<Financeiro> payments, OutputStream outputStream) {
         try {
+            // Mapeia os pagamentos em uma lista de mapas
             List<Map<String, Object>> data = payments.stream().map(payment -> {
                 Map<String, Object> map = new HashMap<>();
                 map.put("metodoPagamentoEnum", payment.getMetodoPagamentoEnum() != null ? payment.getMetodoPagamentoEnum().name() : "N/A");
@@ -26,24 +27,20 @@ public class PdfGenerator {
                 return map;
             }).toList();
 
-            // Obtém o caminho do template a partir da variável de ambiente
-            String templatePath = System.getenv("RECIBO_TEMPLATE_PATH");
-            if (templatePath == null || templatePath.isEmpty()) {
-                throw new IllegalStateException("A variável de ambiente RECIBO_TEMPLATE_PATH não está configurada.");
+            // Obtém o arquivo do template do classpath
+            InputStream templateStream = PdfGenerator.class.getClassLoader().getResourceAsStream("templates/financeiroReport.jrxml");
+            if (templateStream == null) {
+                throw new FileNotFoundException("Template 'financeiroReport.jrxml' não encontrado no classpath.");
             }
 
-            // Localiza o arquivo do template
-            File templateFile = new File(templatePath, "financeiroReport.jrxml");
-            if (!templateFile.exists()) {
-                throw new FileNotFoundException("Arquivo 'financeiroReport.jrxml' não encontrado no caminho: " + templateFile.getAbsolutePath());
-            }
+            // Compila o relatório a partir do InputStream
+            JasperReport jasperReport = JasperCompileManager.compileReport(templateStream);
 
-            // Compila o relatório
-            JasperReport jasperReport = JasperCompileManager.compileReport(templateFile.getAbsolutePath());
-
+            // Preenche o relatório com os dados
             JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(data);
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, null, dataSource);
 
+            // Exporta o relatório para o OutputStream
             JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);
         } catch (JRException e) {
             e.printStackTrace();
@@ -52,6 +49,7 @@ public class PdfGenerator {
             throw new RuntimeException(e);
         }
     }
+
 
     public static void generateReceipt(List<Financeiro> payments, OutputStream outputStream) {
         try {
