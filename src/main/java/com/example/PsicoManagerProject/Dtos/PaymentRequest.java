@@ -9,6 +9,7 @@ import java.time.LocalDate;
 @Data
 public class PaymentRequest {
 
+    private Long id;
     private String cpf;
     private BigDecimal valorPago;
     private LocalDate diaDoPagamento;

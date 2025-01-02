@@ -142,4 +142,41 @@ public class FinanceiroController {
         }
     }
 
+    @PutMapping("/{id}")
+    @Operation(summary = "Editar pagamento", description = "Atualiza um pagamento existente pelo ID.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", content = {
+                    @Content(schema = @Schema(implementation = Financeiro.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "Pagamento não encontrado")
+    })
+    public ResponseEntity<Financeiro> updatePayment(
+            @PathVariable Long id, @RequestBody PaymentRequest paymentRequest) {
+        Financeiro payment = financeiroRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Pagamento com ID " + id + " não encontrado"));
+
+        payment.setValorPago(paymentRequest.getValorPago());
+        payment.setDiaDoPagamento(paymentRequest.getDiaDoPagamento());
+        payment.setReferencia(paymentRequest.getReferencia());
+        payment.setMetodoPagamentoEnum(paymentRequest.getMetodoPagamentoEnum());
+
+        financeiroRepository.save(payment);
+        return ResponseEntity.ok(payment);
+    }
+
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Excluir pagamento", description = "Exclui um pagamento pelo ID.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Pagamento excluído com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Pagamento não encontrado")
+    })
+    public ResponseEntity<Void> deletePayment(@PathVariable Long id) {
+        Financeiro payment = financeiroRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Pagamento com ID " + id + " não encontrado"));
+        financeiroRepository.delete(payment);
+        return ResponseEntity.ok().build();
+    }
+
+
 }

@@ -40,6 +40,10 @@ public class Financeiro {
     @Schema(example = "PIX", description = "Método usado para pagar")
     private MetodoPagamentoEnum metodoPagamentoEnum;
 
+    @Column(name = "endereco", columnDefinition = "TEXT")
+    private String endereco;
+
+
     public String getMetodoPagamentoAsString() {
         return metodoPagamentoEnum.name();
     }
