@@ -7,12 +7,15 @@ import com.example.PsicoManagerProject.Entitys.User;
 import com.example.PsicoManagerProject.Repositorys.UserRepository;
 import com.example.PsicoManagerProject.Security.JwtService;
 import com.example.PsicoManagerProject.Service.EmailService;
+import com.example.PsicoManagerProject.Service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +32,9 @@ public class AuthController {
     private final JwtService jwtService;
     private EmailService emailService;
 
+    @Autowired
+    private UserService userService;
+
     public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
@@ -42,13 +48,12 @@ public class AuthController {
                     @Content(schema = @Schema(implementation = User.class))
             })
     })
-    public String register(@RequestBody RegisterRequest request) {
-        User user = new User();
-        user.setUsername(request.getUsername());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRole(request.getRole());
-        userRepository.save(user);
-        return "Usuario Registrado com Sucesso!";
+    public ResponseEntity<String> register(@RequestBody User user) {
+        if (userService.isUsernameTaken(user.getUsername())) {
+            return ResponseEntity.badRequest().body("Esse Usuário já existe!");
+        }
+        userService.registerUser(user);
+        return ResponseEntity.ok("Usuário registrado com sucesso!");
     }
 
     @PostMapping("/login")
