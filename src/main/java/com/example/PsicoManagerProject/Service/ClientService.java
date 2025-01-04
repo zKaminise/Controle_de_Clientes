@@ -36,14 +36,11 @@ public class ClientService {
 
     @Transactional
     public void deleteClientByCpf(String cpf) throws ClientNotFoundException {
-        // Buscar o cliente pelo CPF
         Client client = clientRepository.findByCpf(cpf)
                 .orElseThrow(() -> new ClientNotFoundException("Cliente não encontrado com o CPF fornecido: " + cpf));
 
-        // Deletar os registros relacionados na tabela Financeiro
         financeiroRepository.deleteByClientId(client.getId());
 
-        // Deletar o cliente
         clientRepository.delete(client);
     }
 

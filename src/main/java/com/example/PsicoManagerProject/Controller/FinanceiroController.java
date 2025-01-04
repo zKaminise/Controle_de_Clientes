@@ -119,17 +119,22 @@ public class FinanceiroController {
     })
     public ResponseEntity<byte[]> generateReport(@RequestParam String startDate, @RequestParam String endDate) {
         try {
+            // Converte as datas recebidas como String para LocalDate
             LocalDate start = LocalDate.parse(startDate);
             LocalDate end = LocalDate.parse(endDate);
 
+            // Busca os pagamentos no intervalo de datas
             List<Financeiro> payments = financeiroRepository.findByDiaDoPagamentoBetween(start, end);
-
             if (payments.isEmpty()) {
                 throw new ResourceNotFoundException("Nenhum pagamento encontrado no intervalo de datas fornecido.");
             }
 
+            // Prepara o intervalo de datas para o relatório
+            String dataIntervalo = startDate + " a " + endDate;
+
             try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-                PdfGenerator.generateReport(payments, baos);
+                // Passa o intervalo de datas para o PdfGenerator
+                PdfGenerator.generateReport(payments, baos, dataIntervalo);
 
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.APPLICATION_PDF);
@@ -141,6 +146,7 @@ public class FinanceiroController {
             throw new RuntimeException("Erro ao gerar relatório: " + e.getMessage(), e);
         }
     }
+
 
     @PutMapping("/{id}")
     @Operation(summary = "Editar pagamento", description = "Atualiza um pagamento existente pelo ID.")

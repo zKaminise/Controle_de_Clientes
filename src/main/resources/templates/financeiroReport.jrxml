@@ -6,40 +6,115 @@
               name="financeiroReport" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30"
               rightMargin="30" topMargin="20" bottomMargin="20" uuid="e8d9d7b8-16c5-4c94-b79a-40851a3d9b0b">
 
-    <field name="valorPago" class="java.math.BigDecimal"/>
+    <parameter name="dataIntervalo" class="java.lang.String"/>
+
+    <!-- Campos do relatório -->
+    <field name="nome" class="java.lang.String"/>
+    <field name="cpf" class="java.lang.String"/>
     <field name="diaDoPagamento" class="java.time.LocalDate"/>
+    <field name="valorPago" class="java.math.BigDecimal"/>
     <field name="metodoPagamentoEnum" class="java.lang.String"/>
 
+    <sortField name="diaDoPagamento" order="Ascending"/>
+
+
+    <!-- Título do Relatório -->
     <title>
         <band height="50">
             <textField>
-                <reportElement x="0" y="10" width="535" height="30" uuid="ec7c7e87-cb5b-4a2f-8a23-e23c760a1ec3"/>
+                <reportElement x="0" y="10" width="535" height="30"/>
                 <textElement>
                     <font size="18" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA["Relatório Financeiro de Pagamentos"]]></textFieldExpression>
             </textField>
+            <line>
+                <reportElement x="0" y="49" width="535" height="1"/>
+            </line>
         </band>
     </title>
 
+
+    <!-- Cabeçalho da Página -->
+    <pageHeader>
+        <band height="30">
+            <textField>
+                <reportElement x="0" y="0" width="535" height="20"/>
+                <textElement>
+                    <font size="12" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Intervalo de Datas: " + $P{dataIntervalo}]]></textFieldExpression>
+            </textField>
+        </band>
+    </pageHeader>
+
+    <!-- Cabeçalho da Tabela -->
     <columnHeader>
         <band height="30">
+            <!-- Linha horizontal no cabeçalho -->
+            <line>
+                <reportElement x="0" y="29" width="535" height="1"/>
+            </line>
+
+            <!-- Nome -->
             <staticText>
-                <reportElement x="0" y="0" width="120" height="20" uuid="f6d76c37-f365-498e-8b4d-8f4a4e97c5a1"/>
+                <reportElement x="0" y="0" width="120" height="20" backcolor="#f2f2f2" mode="Opaque"/>
                 <textElement>
                     <font isBold="true"/>
                 </textElement>
-                <text><![CDATA[Data de Pagamento]]></text>
+                <text><![CDATA[Nome]]></text>
             </staticText>
+
+            <!-- Linha vertical após o campo Nome -->
+            <line>
+                <reportElement x="120" y="0" width="1" height="30"/>
+            </line>
+
+            <!-- CPF -->
             <staticText>
-                <reportElement x="130" y="0" width="120" height="20" uuid="7d2b6fb2-8c7f-4b69-9064-7a6cf502e81f"/>
+                <reportElement x="130" y="0" width="120" height="20" backcolor="#f2f2f2" mode="Opaque"/>
                 <textElement>
                     <font isBold="true"/>
                 </textElement>
-                <text><![CDATA[Valor Pago]]></text>
+                <text><![CDATA[CPF]]></text>
             </staticText>
+
+            <!-- Linha vertical após o campo CPF -->
+            <line>
+                <reportElement x="250" y="0" width="1" height="30"/>
+            </line>
+
+            <!-- Data -->
             <staticText>
-                <reportElement x="260" y="0" width="120" height="20" uuid="aad64cc7-2137-4874-a68b-6e0420a6438b"/>
+                <reportElement x="260" y="0" width="80" height="20" backcolor="#f2f2f2" mode="Opaque"/>
+                <textElement>
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[Data]]></text>
+            </staticText>
+
+            <!-- Linha vertical após o campo Data -->
+            <line>
+                <reportElement x="340" y="0" width="1" height="30"/>
+            </line>
+
+            <!-- Valor -->
+            <staticText>
+                <reportElement x="350" y="0" width="80" height="20" backcolor="#f2f2f2" mode="Opaque"/>
+                <textElement>
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[Valor]]></text>
+            </staticText>
+
+            <!-- Linha vertical após o campo Valor -->
+            <line>
+                <reportElement x="430" y="0" width="1" height="30"/>
+            </line>
+
+            <!-- Método de Pagamento -->
+            <staticText>
+                <reportElement x="440" y="0" width="95" height="20" backcolor="#f2f2f2" mode="Opaque"/>
                 <textElement>
                     <font isBold="true"/>
                 </textElement>
@@ -48,29 +123,92 @@
         </band>
     </columnHeader>
 
+
+
+    <!-- Detalhes da Tabela -->
     <detail>
         <band height="30">
+            <!-- Linha horizontal para separar registros -->
+            <line>
+                <reportElement x="0" y="29" width="535" height="1"/>
+            </line>
+
+            <!-- Nome -->
             <textField>
-                <reportElement x="0" y="0" width="120" height="20" uuid="5bfb59a3-04b2-4bd9-bc6b-358163b92f77"/>
-                <textFieldExpression><![CDATA[$F{diaDoPagamento}]]></textFieldExpression>
+                <reportElement x="0" y="0" width="120" height="20"/>
+                <textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
             </textField>
+
+            <!-- Linha vertical após Nome -->
+            <line>
+                <reportElement x="120" y="0" width="1" height="30"/>
+            </line>
+
+            <!-- CPF -->
             <textField>
-                <reportElement x="130" y="0" width="120" height="20" uuid="cd37c8a3-648e-4f15-8c99-8c4e2549cbd3"/>
+                <reportElement x="130" y="0" width="120" height="20"/>
+                <textFieldExpression><![CDATA[$F{cpf}]]></textFieldExpression>
+            </textField>
+
+            <!-- Linha vertical após CPF -->
+            <line>
+                <reportElement x="250" y="0" width="1" height="30"/>
+            </line>
+
+            <!-- Data -->
+            <textField>
+                <reportElement x="260" y="0" width="80" height="20"/>
+                <textFieldExpression><![CDATA[$F{diaDoPagamento}.toString()]]></textFieldExpression>
+            </textField>
+
+            <!-- Linha vertical após Data -->
+            <line>
+                <reportElement x="340" y="0" width="1" height="30"/>
+            </line>
+
+            <!-- Valor -->
+            <textField>
+                <reportElement x="350" y="0" width="80" height="20"/>
                 <textFieldExpression><![CDATA[$F{valorPago}]]></textFieldExpression>
             </textField>
+
+            <!-- Linha vertical após Valor -->
+            <line>
+                <reportElement x="430" y="0" width="1" height="30"/>
+            </line>
+
+            <!-- Método de Pagamento -->
             <textField>
-                <reportElement x="260" y="0" width="120" height="20" uuid="2c7b455e-9f6b-4bda-9273-9144ae476242"/>
+                <reportElement x="440" y="0" width="95" height="20"/>
                 <textFieldExpression><![CDATA[$F{metodoPagamentoEnum}]]></textFieldExpression>
             </textField>
         </band>
     </detail>
 
+
+
+    <!-- Rodapé da Página -->
     <pageFooter>
         <band height="30">
+            <line>
+                <reportElement x="0" y="0" width="535" height="1"/>
+            </line>
             <textField>
-                <reportElement x="0" y="0" width="535" height="20" uuid="c135fb98-dc73-4c02-bb99-531c83362f5b"/>
+                <reportElement x="0" y="10" width="535" height="20"/>
                 <textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER}]]></textFieldExpression>
             </textField>
         </band>
     </pageFooter>
+
+
+    <!-- Mensagem para quando não houver dados -->
+    <noData>
+        <band height="30">
+            <staticText>
+                <reportElement x="0" y="0" width="535" height="20"/>
+                <text><![CDATA[Nenhum dado encontrado para o intervalo fornecido.]]></text>
+            </staticText>
+        </band>
+    </noData>
+
 </jasperReport>
