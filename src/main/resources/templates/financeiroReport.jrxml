@@ -118,7 +118,7 @@
                 <textElement>
                     <font isBold="true"/>
                 </textElement>
-                <text><![CDATA[Método de Pagamento]]></text>
+                <text><![CDATA[Pagamento via]]></text>
             </staticText>
         </band>
     </columnHeader>
