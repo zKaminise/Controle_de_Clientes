@@ -41,20 +41,20 @@ public class AuthController {
         this.jwtService = jwtService;
     }
 
-    @PostMapping("/register")
-    @Operation(summary = "Registrar um novo usuario e senha", description = "Essa função é responsável por Registrar um novo usuario e senha")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", content = {
-                    @Content(schema = @Schema(implementation = User.class))
-            })
-    })
-    public ResponseEntity<String> register(@RequestBody User user) {
-        if (userService.isUsernameTaken(user.getUsername())) {
-            return ResponseEntity.badRequest().body("Esse Usuário já existe!");
-        }
-        userService.registerUser(user);
-        return ResponseEntity.ok("Usuário registrado com sucesso!");
-    }
+//    @PostMapping("/register")
+//    @Operation(summary = "Registrar um novo usuario e senha", description = "Essa função é responsável por Registrar um novo usuario e senha")
+//    @ApiResponses({
+//            @ApiResponse(responseCode = "200", content = {
+//                    @Content(schema = @Schema(implementation = User.class))
+//            })
+//    })
+//    public ResponseEntity<String> register(@RequestBody User user) {
+//        if (userService.isUsernameTaken(user.getUsername())) {
+//            return ResponseEntity.badRequest().body("Esse Usuário já existe!");
+//        }
+//        userService.registerUser(user);
+//        return ResponseEntity.ok("Usuário registrado com sucesso!");
+//    }
 
     @PostMapping("/login")
     @Operation(summary = "Fazer login no sistema", description = "Essa função é responsável por Fazer login no sistema")
