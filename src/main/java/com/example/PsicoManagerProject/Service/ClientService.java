@@ -24,9 +24,6 @@ public class ClientService {
         if (clientRepository.existsByCpf(client.getCpf())) {
             throw new IllegalArgumentException("CPF já cadastrado");
         }
-        if (clientRepository.existsByEmail(client.getEmail())) {
-            throw new IllegalArgumentException("Email já cadastrado");
-        }
         return clientRepository.save(client);
     }
 
